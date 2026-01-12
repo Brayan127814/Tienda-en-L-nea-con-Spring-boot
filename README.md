@@ -26,9 +26,7 @@ DB_URL=jdbc:mysql://localhost:3306/TIENDA_EN_LINEA?useSSL=false&serverTimezone=U
 DB_USER=root
 DB_PASSWORD=tu_password
 JWT_SECRET=tu_clave_secreta
-
-
-
+---
 ---
 ## Base de Datos
  - CREATE DATABASE TIENDA_EN_LINEA;
