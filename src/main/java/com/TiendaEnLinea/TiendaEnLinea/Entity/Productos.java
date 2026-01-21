@@ -33,6 +33,9 @@ public class Productos {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
+    private  String imageUrl;
+
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")

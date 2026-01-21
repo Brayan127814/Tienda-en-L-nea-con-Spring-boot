@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ProductoResponse {
+    private String imageUrl;
     private  Long id;
     private String productName;
     private String descriptions;
     private Integer stock;
     private BigDecimal price;
-
     private  Long categoryId;
     private  String categoryName;
 }

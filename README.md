@@ -28,5 +28,7 @@ DB_PASSWORD=tu_password
 JWT_SECRET=tu_clave_secreta
 ---
 ---
-## Base de Datos
+
+
+#### Base de Datos
  - CREATE DATABASE TIENDA_EN_LINEA;

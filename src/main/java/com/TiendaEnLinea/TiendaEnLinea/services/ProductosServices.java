@@ -41,6 +41,7 @@ public class ProductosServices {
                 .descriptions(data.getDescriptions())
                 .stock(data.getStock())
                 .price(data.getPrice())
+                .imageUrl(data.getImageUrl())
                 .categoria(categoria)
                 .build();
 
@@ -50,11 +51,13 @@ public class ProductosServices {
 
         //Retornar DTO de repuesta
         ProductoResponse response = new ProductoResponse();
+        response.setImageUrl(guardado.getImageUrl());
         response.setId(guardado.getId());
         response.setProductName(guardado.getProductName());
         response.setDescriptions(guardado.getDescriptions());
         response.setStock(guardado.getStock());
         response.setPrice(guardado.getPrice());
+
         response.setCategoryId(categoria.getId());
         response.setCategoryName(categoria.getCategoryName());
 
@@ -68,7 +71,7 @@ public class ProductosServices {
         List<Productos> productos = productosRepository.findAll();
 
         return productos.stream().map(p -> ProductoResponse.builder()
-
+                .imageUrl(p.getImageUrl())
                 .id(p.getId())
                 .productName(p.getProductName())
                 .descriptions(p.getDescriptions())
@@ -87,6 +90,7 @@ public class ProductosServices {
         Productos producto = productosRepository.findById(id).orElseThrow(() -> new NotFoundExceptions("Producto no encontrado"));
 
         return ProductoResponse.builder()
+                .imageUrl(producto.getImageUrl())
                 .id(producto.getId())
                 .productName(producto.getProductName())
                 .descriptions(producto.getDescriptions())

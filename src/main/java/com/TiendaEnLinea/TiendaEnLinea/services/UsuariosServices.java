@@ -35,12 +35,13 @@ public class UsuariosServices {
     public UsuarioResponse register(UsuarioRequest data) {
         //Verificar si el usuario se encuentra registrado
 
-        if (usuarioRepository.findByEmail(data.getEmail()) != null) {
+        if (usuarioRepository.findByEmail(data.getEmail()).isPresent()) {
+            System.out.println(usuarioRepository.findByEmail(data.getEmail()));
             throw new RuntimeException("Cuenta de correo ya se encuentra registrado");
         }
 
         //ASIGNAR ROLES
-        Optional<RolesEntity> roles = rolesRepository.findByRoleName("ROLE_CLIENTE");
+        Optional<RolesEntity> roles = rolesRepository.findByRoleName("ROLE_ADMIN");
         if (roles.isEmpty()) {
             throw new RuntimeException("Rol no existe en la BD");
         }
