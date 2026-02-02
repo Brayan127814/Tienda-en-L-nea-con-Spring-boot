@@ -41,7 +41,7 @@ public class UsuariosServices {
         }
 
         //ASIGNAR ROLES
-        Optional<RolesEntity> roles = rolesRepository.findByRoleName("ROLE_ADMIN");
+        Optional<RolesEntity> roles = rolesRepository.findByRoleName("ROLE_CLIENTE");
         if (roles.isEmpty()) {
             throw new RuntimeException("Rol no existe en la BD");
         }

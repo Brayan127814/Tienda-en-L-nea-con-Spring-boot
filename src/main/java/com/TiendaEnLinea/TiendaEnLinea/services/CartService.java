@@ -76,7 +76,7 @@ public class CartService {
 
 
         //OBTENER EL CARRRITO DE ESE USUARIO
-        Cart cart = cartRepository.findByUsuario(usuario).orElseThrow(() -> new NotFoundExceptions("carrito no encontrado"));
+        Cart cart =  obtenerCarrtito(usuario.getId());
         //OBTENER ESE PRODUCCTO
         Productos producto = productosRepository.findById(data.getProductoId()).orElseThrow(() -> new NotFoundExceptions("Producto no encontrado"));
 
