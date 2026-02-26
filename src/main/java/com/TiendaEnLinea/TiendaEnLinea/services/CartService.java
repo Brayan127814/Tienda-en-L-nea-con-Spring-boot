@@ -76,7 +76,7 @@ public class CartService {
 
 
         //OBTENER EL CARRRITO DE ESE USUARIO
-        Cart cart =  obtenerCarrtito(usuario.getId());
+        Cart cart = obtenerCarrtito(usuario.getId());
         //OBTENER ESE PRODUCCTO
         Productos producto = productosRepository.findById(data.getProductoId()).orElseThrow(() -> new NotFoundExceptions("Producto no encontrado"));
 
@@ -100,6 +100,16 @@ public class CartService {
         return cartMapper.toCartMapper(guardado);
     }
 
+    //LISTAR ITEMS DEL CARRITO
+    public CartResponse listItemsCart() {
+        UsuarioEntity usuario = currentService.getCurrenteUser();
+
+        //Obtener el carrito
+        Cart cart = obtenerCarrtito(usuario.getId());
+
+        return mapToResponse(cart);
+    }
+
     //METODO PARA MAPEAR RESPUESTA
     public CartResponse mapToResponse(Cart cart) {
         List<CartItemResponse> itemp = cart.getItems().stream().map(
@@ -109,6 +119,7 @@ public class CartService {
 
                     return CartItemResponse.builder()
                             .itemId(item.getId())
+                            .imageUrl(item.getProductos().getImageUrl())
                             .productoId(item.getProductos().getId())
                             .name(item.getProductos().getProductName())
                             .quantity(item.getQuantity())
@@ -137,12 +148,9 @@ public class CartService {
     public CartResponse eliminarProducto(long productoId) {
 
         //Obtener usuaro loguado
-
-
         UsuarioEntity usuario = currentService.getCurrenteUser();
 
         //Obtener su carrito
-
         Cart cart = obtenerCarrtito(usuario.getId());
         //OBTENER PRODUCTO
         Productos producto = productosRepository.findById(productoId).orElseThrow(() -> new NotFoundExceptions("Producto no encontrado"));
@@ -156,7 +164,9 @@ public class CartService {
         } else {
             cartItemRepository.delete(item);
         }
-        return mapToResponse(cart);
+
+        Cart actualizado = cartRepository.findById(cart.getId()).orElseThrow(() -> new NotFoundExceptions("Carrito no encontrado"));
+        return mapToResponse(actualizado);
     }
 
     //vaciar cart

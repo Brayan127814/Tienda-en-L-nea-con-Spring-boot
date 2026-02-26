@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -16,8 +17,8 @@ import java.util.List;
 
 @Component
 public class JwtUtils {
-    private static final long EXPIRATION_TIME = 86400000;
-
+    private static final long ACCESS_EXPIRATION = 900000; // 15 minutos
+    private static final long REFRESH_EXPIRATION = 604800000; // 7 días
     @Value("${jwt.secret:miClaveSecretaPorDefecto1234567891011121314151617}")
     private String secretString;
 
@@ -27,17 +28,15 @@ public class JwtUtils {
 
     //GENERAR TOKEN
     public String generarToken(UsuarioEntity usuario) {
+        //OBTENEMOS LA LISTA DE ROLES
         List<String> roles = usuario.getRoles().stream().map(r -> r.getRoleName()).toList();
-
-        return Jwts.builder()
-                .setSubject(usuario.getEmail())
-                .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
-                .compact();
+        return Jwts.builder().setSubject(usuario.getEmail()).claim("roles", roles).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRATION)).signWith(getSecretKey(), SignatureAlgorithm.HS256).compact();
     }
 
+    //REFRESCAR TOKEN
+    public String generarRefreshToken(UsuarioEntity usuario) {
+        return Jwts.builder().setSubject(usuario.getEmail()).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION)).signWith(getSecretKey(), SignatureAlgorithm.HS256).compact();
+    }
     //EXTRAER EL SUBJECT DEL TOKEN
 
     public String getSubjectFromToken(String token) {

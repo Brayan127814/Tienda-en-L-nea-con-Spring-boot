@@ -1,5 +1,6 @@
 package com.TiendaEnLinea.TiendaEnLinea.dtos;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartItemResponse {
-    private  String imageUrl;
-    private Long itemId;
-    private Long productoId;
-    private String name;
-    private Integer quantity;
-    private BigDecimal precioUnitario;
-    private  BigDecimal subtotal;
+public class ProductoUpdateDto {
+    private  Integer stock;
+    private BigDecimal price;
+    private String imageUrl;
 }

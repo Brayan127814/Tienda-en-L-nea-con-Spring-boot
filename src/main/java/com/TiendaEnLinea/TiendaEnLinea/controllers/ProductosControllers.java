@@ -2,10 +2,13 @@ package com.TiendaEnLinea.TiendaEnLinea.controllers;
 
 import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoRequestDto;
 import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoResponse;
+import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoUpdateDto;
 import com.TiendaEnLinea.TiendaEnLinea.services.ProductosServices;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -41,6 +44,32 @@ public class ProductosControllers {
     @GetMapping("/product/{id}")
     public ResponseEntity<ProductoResponse> getProductById(@PathVariable long id) {
         ProductoResponse producto = productosServices.productById(id);
-        return  ResponseEntity.ok(producto);
+        return ResponseEntity.ok(producto);
+    }
+
+    //ENPOINT PARA PRODUCTOS PAGINADOS
+    @GetMapping("/paginados")
+    public ResponseEntity<Page<ProductoResponse>> listarPaginados(Pageable pageable) {
+        return ResponseEntity.ok(productosServices.productosPaginados(pageable));
+    }
+
+    //ENDPOINT PARA ACTUALIZAR UN PRODUCTO
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<ProductoResponse> actualizarProducto(@PathVariable long id, @RequestBody ProductoUpdateDto data) {
+        ProductoResponse producto = productosServices.updateProducto(id, data);
+        return ResponseEntity.ok(producto);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<ProductoResponse>> categorias(@RequestParam(required = false) Long id) {
+           List<ProductoResponse> productoResponses = productosServices.getByCategoria(id);
+           return  ResponseEntity.ok(productoResponses);
+    }
+
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable long id) {
+        productosServices.deleteProducto(id);
+        return ResponseEntity.noContent().build();
     }
 }

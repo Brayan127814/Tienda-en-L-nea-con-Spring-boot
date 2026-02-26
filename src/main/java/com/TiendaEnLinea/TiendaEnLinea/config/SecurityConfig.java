@@ -47,8 +47,7 @@ public class SecurityConfig {
         authenticationProvider.setUserDetailsService(customDetailService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
 
-
-        return authenticationProvider;
+        return  authenticationProvider;
     }
 
         /*
@@ -64,7 +63,8 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/usuarios/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/register").permitAll()
                         .requestMatchers("/usuarios/all", "/usuarios/*").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/usuarios/updateDate/*").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/usuarios/updateRoles").hasAnyAuthority("ROLE_ADMIN")
@@ -73,7 +73,18 @@ public class SecurityConfig {
                         .requestMatchers("/productos/addProducts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/productos/allproducts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/productos/product/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/productos/paginados").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/productos/actualizar/*").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/productos/eliminar/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/productos/**").permitAll()
 
+                        //CATEGORIAS
+                        .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
+
+                        //CART
+                        .requestMatchers(HttpMethod.POST,"/cart/addproductotoCart").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/cart/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/cart/delete/**").authenticated()
 
                         //PROTECCION DE ENPOINT PARA ORDENES
                         .requestMatchers(HttpMethod.POST, "/order/*/paid").authenticated()

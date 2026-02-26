@@ -19,11 +19,26 @@ public class CartController {
 
     //EDPOINT PARA AGREGAR PRODUCTOS AL CARRITO
 
-    @PostMapping("/addproductotoCart")
+    @PostMapping("/addproductoCart")
 
     public ResponseEntity<CartResponse> addproducttoCart(@RequestBody AddToCartRequest data) {
         CartResponse cart = cartService.agregarProductos(data);
 
         return ResponseEntity.ok(cart);
     }
+
+    @GetMapping("/items")
+    public ResponseEntity<CartResponse> obtenerCarrito() {
+        return ResponseEntity.ok(cartService.listItemsCart());
+
+
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<CartResponse> eliminarItems(@PathVariable long id){
+         CartResponse cartResponse = cartService.eliminarProducto(id);
+         return ResponseEntity.ok(cartResponse);
+    }
+
+
 }

@@ -8,7 +8,12 @@ import com.TiendaEnLinea.TiendaEnLinea.Repository.CategoriaRepository;
 import com.TiendaEnLinea.TiendaEnLinea.Repository.ProductosRepository;
 import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoRequestDto;
 import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoResponse;
+import com.TiendaEnLinea.TiendaEnLinea.dtos.ProductoUpdateDto;
 import com.TiendaEnLinea.TiendaEnLinea.dtos.UsuarioResponse;
+import com.TiendaEnLinea.TiendaEnLinea.utils.ProductsMapper;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +24,12 @@ public class ProductosServices {
 
     private final ProductosRepository productosRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ProductsMapper productsMapper;
 
-    public ProductosServices(ProductosRepository productosRepository, CategoriaRepository categoriaRepository) {
+    public ProductosServices(ProductosRepository productosRepository, CategoriaRepository categoriaRepository, ProductsMapper productsMapper) {
         this.productosRepository = productosRepository;
         this.categoriaRepository = categoriaRepository;
+        this.productsMapper = productsMapper;
     }
 
     //Registrar productos
@@ -101,4 +108,69 @@ public class ProductosServices {
                 .build();
     }
 
+
+    //Actualizar los campos de un producto
+
+
+    public ProductoResponse updateProducto(long productoId, ProductoUpdateDto data) {
+        //buscar el producto
+        Productos producto = productosRepository.findById(productoId).orElseThrow(() -> new NotFoundExceptions("Producto no encontrado"));
+
+        //Actualizar los campos
+        producto.setStock(data.getStock());
+        producto.setPrice(data.getPrice());
+        producto.setImageUrl(data.getImageUrl());
+
+        Productos actualizado = productosRepository.save(producto);
+
+
+        return ProductoResponse.builder()
+                .id(actualizado.getId())
+                .productName(actualizado.getProductName())
+                .descriptions(actualizado.getDescriptions())
+                .stock(actualizado.getStock())
+                .price(actualizado.getPrice())
+                .imageUrl(actualizado.getImageUrl())
+                .categoryName(actualizado.getCategoria().getCategoryName())
+                .categoryId(actualizado.getCategoria().getId())
+
+
+                .build();
+    }
+
+    //Eliminar un producto
+
+    public void deleteProducto(long productoId) {
+        productosRepository.findById(productoId).ifPresentOrElse(
+                productosRepository::delete, () -> {
+                    throw new NotFoundExceptions("Producto no encontrado");
+                }
+
+        );
+    }
+
+    //Obtener los productos paginados
+    public Page<ProductoResponse> productosPaginados(Pageable pageable) {
+        return productosRepository.findAll(pageable).map(productsMapper::convertirADto);
+    }
+
+    //Obtener productos por categoria
+    @Transactional
+    public List<ProductoResponse> getByCategoria(long categoriaId) {
+        List<Productos> productos = productosRepository.findByCategoriaId(categoriaId);
+
+        return productos.stream().map(p -> ProductoResponse.builder()
+                .imageUrl(p.getImageUrl())
+                .id(p.getId())
+                .productName(p.getProductName())
+                .descriptions(p.getDescriptions())
+                .stock(p.getStock())
+                .price(p.getPrice())
+                .categoryId(p.getCategoria().getId())
+                .categoryName(p.getCategoria().getCategoryName())
+                .build()
+
+
+        ).toList();
+    }
 }
